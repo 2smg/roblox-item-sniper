@@ -37,8 +37,8 @@ try:
     with open("config.json") as fp:
         config_data = json.load(fp)
         PRICE_CHECK_THREADS = int(config_data["price_check_threads"])
-        TARGET_ASSETS = config_data["targets"]
         XSRF_REFRESH_INTERVAL = float(config_data["xsrf_refresh_interval"])
+        TARGET_ASSETS = config_data["targets"]
         del config_data
 except FileNotFoundError:
     exit("The config.json file doesn't exist, or is corrupted.")
