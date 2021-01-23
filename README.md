@@ -18,4 +18,4 @@ Attempts to buy limited items as quickly as possible, as soon as they go below s
 
 # Known bugs / To-Do
 - The bot attempts to purchase glitched/'recoil' resellers (this is a bug on roblox's side that happens for a second after a limited is purchased)
-- BuyThread should have exception alerts
+- PriceCheckThread should have exception alerts
