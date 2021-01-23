@@ -1,7 +1,31 @@
 import threading
 import http.client
+import time
 from collections import deque
 from urllib.parse import urlparse
+
+class AlwaysAliveConnection:
+    def __init__(self, hostname, refresh_interval):
+        self.hostname = hostname
+        self.refresh_interval = refresh_interval
+        self.connection = None
+        self.event = threading.Event()
+        self.thread = threading.Thread(target=self.updater)
+        self.thread.start()
+
+    def get(self):
+        if not self.connection:
+            self.event.wait()
+            self.event.clear()
+        return self.connection
+    
+    def updater(self):
+        while 1:
+            try:
+                self.connection = http.client.HTTPSConnection(self.hostname, 443)
+                time.sleep(self.refresh_interval)
+            except Exception as err:
+                print("AlwaysAliveConnection thread error:", err, type(err))
 
 class Proxy:
     def __init__(self, proxy):
@@ -13,7 +37,7 @@ class Proxy:
         for conn in list(self.connection_map.values()):
             conn.close()
     
-    def get_connection(self, hostname, force=False):
+    def get_connection(self, hostname, force=False) -> http.client.HTTPSConnection:
         hostname = hostname.lower()
         if not force and hostname in self.connection_map:
             return self.connection_map[hostname]
