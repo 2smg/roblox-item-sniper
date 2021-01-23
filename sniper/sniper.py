@@ -2,6 +2,7 @@ import os.path
 import json
 import threading
 import requests
+import http.client
 import re
 import time
 from httpstuff import ProxyPool, AlwaysAliveConnection
@@ -68,8 +69,7 @@ class XsrfUpdateThread(threading.Thread):
 
         while 1:
             try:
-                proxy = proxy_pool.get()
-                conn = proxy.get_connection("www.roblox.com")
+                conn = http.client.HTTPSConnection("www.roblox.com")
                 conn.request("GET", "/home", headers={"Cookie": f".ROBLOSECURITY={COOKIE}"})
                 resp = conn.getresponse()
                 data = resp.read()
@@ -79,7 +79,6 @@ class XsrfUpdateThread(threading.Thread):
                     xsrf_token = new_xsrf
                     print("updated xsrf:", new_xsrf)
 
-                proxy_pool.put(proxy)
                 time.sleep(self.refresh_interval)
             except Exception as err:
                 print("xsrf update error:", err, type(err))
