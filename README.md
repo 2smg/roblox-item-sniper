@@ -11,6 +11,11 @@ Attempts to buy limited items as quickly as possible, as soon as they go below s
 - `xsrf_refresh_interval`: number of seconds between each xsrf token refresh (the lower the better, 1-5 is enough)
 - `targets`: list of `[asset_id, price_threshold]` values (the less targets, the better the performance)
 
+# Python setup
+1. Click 'Download Python X.X.X' at https://www.python.org/downloads/
+2. While installing, make sure you check 'Add to PATH'
+3. After installing Python, run the following command in cmd: `pip install requests`
+
 # Usage
 1. Place .ROBLOSECURITY cookie in `cookie.txt`
 1. Place proxies in `proxies.txt`
