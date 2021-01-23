@@ -5,6 +5,7 @@ import requests
 import http.client
 import re
 import time
+import ctypes
 from httpstuff import ProxyPool, AlwaysAliveConnection
 from itertools import cycle
 
@@ -12,6 +13,7 @@ xsrf_token = None
 target = None
 target_updated = 0
 target_lock = threading.Lock()
+refresh_count = 0
 
 PRODUCT_ID_RE = re.compile(r'data\-product\-id="(\d+)"')
 PRICE_RE = re.compile(r'data\-expected\-price="(\d+)"')
@@ -59,6 +61,16 @@ target_iter = cycle([
     )
     for asset_id, price in TARGET_ASSETS
 ])
+
+class StatUpdater(threading.Thread):
+    def __init__(self, refresh_interval):
+        super().__init__()
+        self.refresh_interval = refresh_interval
+    
+    def run(self):
+        while 1:
+            time.sleep(self.refresh_interval)
+            ctypes.windll.kernel32.SetConsoleTitleW(f"refresh count: {refresh_count}")
 
 class XsrfUpdateThread(threading.Thread):
     def __init__(self, refresh_interval):
@@ -115,7 +127,7 @@ class PriceCheckThread(threading.Thread):
         self.buy_threads = buy_threads
     
     def run(self):
-        global target, target_updated
+        global target, target_updated, refresh_count
 
         while True:
             asset_url, price_threshold = next(target_iter)
@@ -143,13 +155,16 @@ class PriceCheckThread(threading.Thread):
                             for t in buy_threads: t.event.set()
                             print("target set:", target)
                 
+                refresh_count += 1
                 proxy_pool.put(proxy)
             except:
                 pass
 
+StatUpdater(1).start()
 xsrf_thread = XsrfUpdateThread(XSRF_REFRESH_INTERVAL)
 xsrf_thread.start()
 buy_threads = [BuyThread() for _ in range(1)]
 for t in buy_threads: t.start()
 pc_threads = [PriceCheckThread(buy_threads) for _ in range(PRICE_CHECK_THREADS)]
 for t in pc_threads: t.start()
+print("running 100%!")
