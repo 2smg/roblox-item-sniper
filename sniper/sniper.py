@@ -158,7 +158,7 @@ class PriceCheckThread(threading.Thread):
                 refresh_count += 1
                 proxy_pool.put(proxy)
             except:
-                raise
+                pass
 
 StatUpdater(1).start()
 xsrf_thread = XsrfUpdateThread(XSRF_REFRESH_INTERVAL)
