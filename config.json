@@ -1,5 +1,5 @@
 {
-    "price_check_threads": 750,
+    "price_check_threads": 250,
     "xsrf_refresh_interval": 5,
     "targets": [
         [20573078, 300],
