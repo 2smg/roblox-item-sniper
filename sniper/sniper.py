@@ -101,7 +101,7 @@ class PriceCheckThread(threading.Thread):
                     raise Exception("Weird response")
 
                 reseller = parse_item_page(data.decode("UTF-8"))
-                if reseller[1] <= price_threshold:
+                if reseller[1] > 0 and reseller[1] <= price_threshold:
                     with target_lock:
                         if target != reseller and start_time > target_updated:
                             target = reseller
