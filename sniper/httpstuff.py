@@ -29,7 +29,7 @@ class ProxyPool:
         self.alive_proxies = deque(maxlen=max_alive)
         self.lock = threading.Lock()
 
-    def load(Self, proxy_list):
+    def load(self, proxy_list):
         with self.lock:
             for proxy in proxy_list:
                 self.raw_proxies.appen(proxy)
