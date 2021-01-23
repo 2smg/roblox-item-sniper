@@ -10,7 +10,7 @@ Attempts to buy limited items as quickly as possible, as soon as they go below s
 # config.json
 - `price_check_threads`: number of threads to use for checking limited prices
 - `xsrf_refresh_interval`: number of seconds between xsrf token refreshes (the lower the better, 1-5 is enough)
-- `targets`: list of [asset_id, price_threshold]
+- `targets`: list of `[asset_id, price_threshold]` values
 
 # Usage
 1. Place .ROBLOSECURITY cookie in `cookie.txt`
