@@ -97,7 +97,15 @@ class BuyThread(threading.Thread):
 
             try:
                 conn = self.conn.get()
-                print(target)
+                conn.request(
+                    method="POST",
+                    url=f"/v1/purchases/products/{target[0]}",
+                    body='{"expectedCurrency":1,"expectedPrice":%d,"expectedSellerId":%d,"userAssetId":%d}' % (target[1], target[2], target[3]),
+                    headers={"Content-Type": "application/json", "Cookie": ".ROBLOSECURITY=%s" % COOKIE, "X-CSRF-TOKEN": xsrf_token}
+                )
+                resp = conn.getresponse()
+                data = json.loads(resp.read())
+                print(f"buy result for {target}: {data}")
             except Exception as err:
                 print(f"failed to buy {target} due to error: {err} {type(err)}")
 
@@ -137,7 +145,7 @@ class PriceCheckThread(threading.Thread):
                 
                 proxy_pool.put(proxy)
             except:
-                raise
+                pass
 
 xsrf_thread = XsrfUpdateThread(1)
 xsrf_thread.start()
