@@ -45,6 +45,10 @@ try:
 except FileNotFoundError:
     exit("The config.json file doesn't exist, or is corrupted.")
 
+# prevent mistakes from happening
+if any([price > 1000000 for asset_id, price in TARGET_ASSETS]):
+    exit("You put the price threshold above 1,000,000 R$ for one of your targets, are you sure about this?")
+
 # load proxies
 proxy_pool = ProxyPool(PRICE_CHECK_THREADS + 1)
 try:
