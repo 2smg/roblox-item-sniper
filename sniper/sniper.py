@@ -39,7 +39,7 @@ target_lock = threading.Lock()
 
 class BuyThread(threading.Thread):
     def __init__(self):
-        super().__int__()
+        super().__init__()
         self.conn = AlwaysAliveConnection("economy.roblox.com", refresh_interval=5)
         self.event = threading.Event()
     
