@@ -34,6 +34,7 @@ asset_url_iter = cycle([
     requests.get(f"https://www.roblox.com/library/{asset_id}/--", allow_redirects=False).url
     for asset_id in ASSET_IDS
 ])
+xsrf_token = None
 target = None
 target_lock = threading.Lock()
 
