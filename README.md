@@ -2,8 +2,7 @@
 Attempts to buy limited items as quickly as possible, as soon as they go below set threshold price. Don't even bother with free proxies.
 
 # Requirements
-- Python 3.6 or above
-- requests module
+- Python 3.6 or above /w requests module
 - Roblox account with robux
 - Proxies
 
