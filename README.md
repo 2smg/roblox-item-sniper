@@ -1,5 +1,5 @@
 # roblox-item-sniper
-Attempts to buy limited items as quickly as possible, as soon as they go below set threshold price.
+Attempts to buy limited items as quickly as possible, as soon as they go below set threshold price. Don't even bother with free proxies.
 
 # Requirements
 - Python 3.6 or above
