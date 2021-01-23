@@ -10,10 +10,10 @@ from httpstuff import ProxyPool, AlwaysAliveConnection
 from itertools import cycle
 
 xsrf_token = None
+refresh_count = 0
 target = None
 target_updated = 0
 target_lock = threading.Lock()
-refresh_count = 0
 
 PRODUCT_ID_RE = re.compile(r'data\-product\-id="(\d+)"')
 PRICE_RE = re.compile(r'data\-expected\-price="(\d+)"')
