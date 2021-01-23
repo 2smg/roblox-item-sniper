@@ -15,3 +15,6 @@ Attempts to buy limited items as quickly as possible, as soon as they go below s
 1. Place .ROBLOSECURITY cookie in `cookie.txt`
 1. Place proxies in `proxies.txt`
 1. Run `sniper.bat`
+
+# Known bugs
+- The bot attempts to purchase glitched/'recoil' resellers (this is a bug on roblox's side that happens for a second after a limited is purchased)
