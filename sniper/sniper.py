@@ -42,7 +42,7 @@ except FileNotFoundError:
     exit("The config.json file doesn't exist, or is corrupted.")
 
 # load proxies
-proxy_pool = ProxyPool(PRICE_CHECK_THREADS)
+proxy_pool = ProxyPool(PRICE_CHECK_THREADS + 1)
 try:
     with open("proxies.txt") as f:
         proxy_pool.load(f.read().splitlines())
@@ -57,6 +57,32 @@ target_iter = cycle([
     )
     for asset_id, price in TARGET_ASSETS
 ])
+
+class XsrfUpdateThread(threading.Thread):
+    def __init__(self, refresh_interval):
+        super().__init__()
+        self.refresh_interval = refresh_interval
+    
+    def run(self):
+        global xsrf_token
+
+        while 1:
+            try:
+                proxy = proxy_pool.get()
+                conn = proxy.get_connection("www.roblox.com")
+                conn.request("GET", "/home", headers={"Cookie": f".ROBLOSECURITY={COOKIE}"})
+                resp = conn.getresponse()
+                data = resp.read()
+                new_xsrf = data.decode("UTF-8").split("setToken('")[1].split("'")[0]
+
+                if new_xsrf != xsrf_token:
+                    xsrf_token = new_xsrf
+                    print("updated xsrf:", new_xsrf)
+
+                proxy_pool.put(proxy)
+                time.sleep(self.refresh_interval)
+            except Exception as err:
+                print("xsrf update error:", err, type(err))
 
 class BuyThread(threading.Thread):
     def __init__(self):
@@ -113,6 +139,8 @@ class PriceCheckThread(threading.Thread):
             except:
                 pass
 
+xsrf_thread = XsrfUpdateThread(1)
+xsrf_thread.start()
 buy_threads = [BuyThread() for _ in range(1)]
 for t in buy_threads: t.start()
 pc_threads = [PriceCheckThread(buy_threads) for _ in range(PRICE_CHECK_THREADS)]
