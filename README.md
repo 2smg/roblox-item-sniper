@@ -11,6 +11,14 @@ Attempts to buy limited items as quickly as possible, as soon as they go below s
 - `xsrf_refresh_interval`: number of seconds between each xsrf token refresh (the lower the better, 1-5 is enough)
 - `targets`: list of `[asset_id, price_threshold]` values (the less targets, the better the performance)
 
+```json
+"targets": [
+[asset_id, price],
+[asset_id, price],
+[asset_id, price]
+]
+```
+
 # Python setup
 1. Click the `Download Python 3.x.x` button at https://www.python.org/downloads/
 2. While installing, make sure you check 'Add to PATH'
