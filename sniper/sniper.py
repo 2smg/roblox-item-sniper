@@ -38,6 +38,7 @@ try:
         config_data = json.load(fp)
         PRICE_CHECK_THREADS = int(config_data["price_check_threads"])
         TARGET_ASSETS = config_data["targets"]
+        XSRF_REFRESH_INTERVAL = config_data["xsrf_refresh_interval"]
         del config_data
 except FileNotFoundError:
     exit("The config.json file doesn't exist, or is corrupted.")
@@ -146,7 +147,7 @@ class PriceCheckThread(threading.Thread):
             except:
                 pass
 
-xsrf_thread = XsrfUpdateThread(1)
+xsrf_thread = XsrfUpdateThread(XSRF_REFRESH_INTERVAL)
 xsrf_thread.start()
 buy_threads = [BuyThread() for _ in range(1)]
 for t in buy_threads: t.start()
