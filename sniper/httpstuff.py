@@ -33,7 +33,7 @@ class Proxy:
         self.proxy = urlparse("http://" + proxy)
         self.connection_map = {}
 
-    def __exit__(self):
+    def __del__(self):
         for conn in list(self.connection_map.values()):
             conn.close()
     
@@ -60,7 +60,7 @@ class ProxyPool:
     
     def get(self):
         with self.lock:
-            if self.alive_proxies:
+            if len(self.alive_proxies):
                 return self.alive_proxies.pop(0)
             return Proxy(self.raw_proxies.pop(0))
 
