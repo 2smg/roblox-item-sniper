@@ -33,7 +33,7 @@ class PriceCheckThread(threading.Thread):
     
     def run(self):
         while True:
-            asset_id = next(ASSET_IDS)
+            asset_id = next(asset_id_iter)
             proxy = proxy_pool.get()
             print(proxy)
 
