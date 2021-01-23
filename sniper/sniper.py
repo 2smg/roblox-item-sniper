@@ -160,11 +160,16 @@ class PriceCheckThread(threading.Thread):
             except:
                 pass
 
-StatUpdater(1).start()
+# start threads
+stat_thread = StatUpdater(1)
+stat_thread.start()
 xsrf_thread = XsrfUpdateThread(XSRF_REFRESH_INTERVAL)
 xsrf_thread.start()
+
 buy_threads = [BuyThread() for _ in range(1)]
 for t in buy_threads: t.start()
+
 pc_threads = [PriceCheckThread(buy_threads) for _ in range(PRICE_CHECK_THREADS)]
 for t in pc_threads: t.start()
+
 print("running 100%!")
