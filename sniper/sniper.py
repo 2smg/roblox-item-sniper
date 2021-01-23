@@ -5,6 +5,10 @@ import requests
 from httpstuff import ProxyPool, AlwaysAliveConnection
 from itertools import cycle
 
+xsrf_token = None
+target = None
+target_lock = threading.Lock()
+
 # load cookie
 try:
     with open("cookie.txt") as fp:
@@ -35,9 +39,6 @@ asset_url_iter = cycle([
         .replace("https://www.roblox.com", "")
     for asset_id in ASSET_IDS
 ])
-xsrf_token = None
-target = None
-target_lock = threading.Lock()
 
 class BuyThread(threading.Thread):
     def __init__(self):
