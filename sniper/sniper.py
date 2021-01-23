@@ -2,12 +2,25 @@ import os.path
 import json
 import threading
 import requests
+import re
 from httpstuff import ProxyPool, AlwaysAliveConnection
 from itertools import cycle
 
 xsrf_token = None
 target = None
 target_lock = threading.Lock()
+
+PRODUCT_ID_RE = re.compile(r'data\-product\-id="(\d+)"')
+PRICE_RE = re.compile(r'data\-expected\-price="(\d+)"')
+SELLER_ID_RE = re.compile(r'data\-expected\-seller-id="(\d+)"')
+USERASSET_ID_RE = re.compile(r'data\-lowest\-private\-sale\-userasset\-id="(\d+)"')
+
+def parse_item_page(data):
+    product_id = int(PRODUCT_ID_RE.search(data).group(1))
+    price = int(PRICE_RE.search(data).group(1))
+    seller_id = int(SELLER_ID_RE.search(data).group(1))
+    userasset_id = int(USERASSET_ID_RE.search(data).group(1))
+    return product_id, price, seller_id, userasset_id
 
 # load cookie
 try:
@@ -21,7 +34,7 @@ try:
     with open("config.json") as fp:
         config_data = json.load(fp)
         PRICE_CHECK_THREADS = int(config_data["price_check_threads"])
-        ASSET_IDS = list(map(int, config_data["asset_ids"]))
+        TARGET_ASSETS = config_data["targets"]
         del config_data
 except FileNotFoundError:
     exit("The config.json file doesn't exist, or is corrupted.")
@@ -34,10 +47,13 @@ try:
 except FileNotFoundError:
     exit("The proxies.txt file was not found")
 
-asset_url_iter = cycle([
-    requests.get(f"https://www.roblox.com/catalog/{asset_id}/--").url \
-        .replace("https://www.roblox.com", "")
-    for asset_id in ASSET_IDS
+target_iter = cycle([
+    (
+        requests.get(f"https://www.roblox.com/catalog/{asset_id}/--").url \
+            .replace("https://www.roblox.com", ""),
+        price
+    )
+    for asset_id, price in TARGET_ASSETS
 ])
 
 class BuyThread(threading.Thread):
@@ -58,19 +74,31 @@ class PriceCheckThread(threading.Thread):
         self.buy_threads = buy_threads
     
     def run(self):
+        global target
+        
         while True:
-            asset_url = next(asset_url_iter)
+            asset_url, price_threshold = next(target_iter)
             proxy = proxy_pool.get()
             
             try:
                 conn = proxy.get_connection("www.roblox.com")
                 conn.putrequest("GET", asset_url, True, True)
                 conn.putheader("Host", "www.roblox.com")
-                conn.putheader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36")
+                conn.putheader("User-Agent", "Roblox/WinInet")
                 conn.endheaders()
                 resp = conn.getresponse()
                 data = resp.read()
-                print(len(data), asset_url)
+
+                if len(data) < 1000:
+                    raise Exception("Weird response")
+
+                reseller = parse_item_page(data.decode("UTF-8"))
+                if reseller[1] <= price_threshold:
+                    with target_lock:
+                        if target != reseller:
+                            target = reseller
+                            print("target set:", target)
+                
                 proxy_pool.put(proxy)
             except:
                 pass
