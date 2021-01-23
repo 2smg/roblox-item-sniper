@@ -23,7 +23,10 @@ class AlwaysAliveConnection:
     def updater(self):
         while 1:
             try:
-                self.connection = http.client.HTTPSConnection(self.hostname, 443)
+                conn = http.client.HTTPSConnection(self.hostname, 443)
+                # fun fact: it won't actually connect until you call .endheaders/.request or .connect
+                conn.connect()
+                self.connection = conn
                 time.sleep(self.refresh_interval)
             except Exception as err:
                 print("AlwaysAliveConnection thread error:", err, type(err))
