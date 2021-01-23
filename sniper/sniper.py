@@ -69,7 +69,7 @@ class PriceCheckThread(threading.Thread):
                 conn.endheaders()
                 resp = conn.getresponse()
                 data = resp.read()
-                print(data, len(data), asset_url)
+                print(len(data), asset_url)
                 proxy_pool.put(proxy)
             except:
                 pass
