@@ -105,7 +105,7 @@ class BuyThread(threading.Thread):
                 )
                 resp = conn.getresponse()
                 data = json.loads(resp.read())
-                print(f"buy result for {target}: {data} ({float(time.time()-target_updated, 4)})")
+                print(f"buy result for {target}: {data} (in {round(time.time()-target_updated, 4)}s)")
             except Exception as err:
                 print(f"failed to buy {target} due to error: {err} {type(err)}")
 
