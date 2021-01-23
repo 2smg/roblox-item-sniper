@@ -66,7 +66,7 @@ class PriceCheckThread(threading.Thread):
                 conn = proxy.get_connection("www.roblox.com")
                 conn.putrequest("GET", asset_url, True, True)
                 conn.putheader("Host", "www.roblox.com")
-                #conn.putheader("User-Agent", "Roblox/WinInet")
+                conn.putheader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36")
                 conn.endheaders()
                 resp = conn.getresponse()
                 data = resp.read()
