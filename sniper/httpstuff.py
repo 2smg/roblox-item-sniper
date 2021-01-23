@@ -61,7 +61,7 @@ class ProxyPool:
     def get(self):
         with self.lock:
             if len(self.alive_proxies):
-                return self.alive_proxies.pop(0)
+                return self.alive_proxies.pop()
             return Proxy(self.raw_proxies.pop(0))
 
     def put(self, proxy):
