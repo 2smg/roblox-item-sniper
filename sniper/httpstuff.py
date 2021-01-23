@@ -1,5 +1,6 @@
 import threading
 import http.client
+import random
 import time
 from collections import deque
 from urllib.parse import urlparse
@@ -62,7 +63,7 @@ class ProxyPool:
         with self.lock:
             if len(self.alive_proxies):
                 return self.alive_proxies.pop()
-            return Proxy(self.raw_proxies.pop(0))
+            return Proxy(random.choice(self.raw_proxies))
 
     def put(self, proxy):
         with self.lock:
