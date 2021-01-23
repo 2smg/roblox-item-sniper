@@ -122,7 +122,8 @@ class PriceCheckThread(threading.Thread):
                 conn.endheaders()
                 resp = conn.getresponse()
                 data = resp.read()
-
+                
+                print(data)
                 if len(data) < 1000:
                     raise Exception("Weird response")
 
