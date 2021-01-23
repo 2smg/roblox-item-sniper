@@ -12,7 +12,7 @@ Attempts to buy limited items as quickly as possible, as soon as they go below s
 - `targets`: list of `[asset_id, price_threshold]` values (the less targets, the better the performance)
 
 # Python setup
-1. Click `Download Python 3.x.x` at https://www.python.org/downloads/
+1. Click the `Download Python 3.x.x` button at https://www.python.org/downloads/
 2. While installing, make sure you check 'Add to PATH'
 3. After installing Python, run the following command in cmd: `pip install requests`
 
