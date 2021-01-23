@@ -13,9 +13,9 @@ Attempts to buy limited items as quickly as possible, as soon as they go below s
 
 ```json
 "targets": [
-  [asset_id, price],
-  [asset_id, price],
-  [asset_id, price]
+  [asset_id, price_threshold],
+  [asset_id, price_threshold],
+  [asset_id, price_threshold]
 ]
 ```
 
