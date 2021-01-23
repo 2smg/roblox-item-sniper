@@ -3,11 +3,13 @@ import json
 import threading
 import requests
 import re
+import time
 from httpstuff import ProxyPool, AlwaysAliveConnection
 from itertools import cycle
 
 xsrf_token = None
 target = None
+target_updated = 0
 target_lock = threading.Lock()
 
 PRODUCT_ID_RE = re.compile(r'data\-product\-id="(\d+)"')
@@ -66,7 +68,12 @@ class BuyThread(threading.Thread):
         while True:
             self.event.wait()
             self.event.clear()
-            conn = self.conn.get()
+
+            try:
+                conn = self.conn.get()
+                print(target)
+            except Exception as err:
+                print(f"failed to buy {target} due to error: {err} {type(err)}")
 
 class PriceCheckThread(threading.Thread):
     def __init__(self, buy_threads):
@@ -74,13 +81,14 @@ class PriceCheckThread(threading.Thread):
         self.buy_threads = buy_threads
     
     def run(self):
-        global target
+        global target, target_updated
 
         while True:
             asset_url, price_threshold = next(target_iter)
             proxy = proxy_pool.get()
             
             try:
+                start_time = time.time()
                 conn = proxy.get_connection("www.roblox.com")
                 conn.putrequest("GET", asset_url, True, True)
                 conn.putheader("Host", "www.roblox.com")
@@ -95,8 +103,9 @@ class PriceCheckThread(threading.Thread):
                 reseller = parse_item_page(data.decode("UTF-8"))
                 if reseller[1] <= price_threshold:
                     with target_lock:
-                        if target != reseller:
+                        if target != reseller and start_time > target_updated:
                             target = reseller
+                            target_updated = time.time()
                             for t in buy_threads: t.event.set()
                             print("target set:", target)
                 
