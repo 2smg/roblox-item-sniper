@@ -137,7 +137,7 @@ class PriceCheckThread(threading.Thread):
                 
                 proxy_pool.put(proxy)
             except:
-                pass
+                raise
 
 xsrf_thread = XsrfUpdateThread(1)
 xsrf_thread.start()
