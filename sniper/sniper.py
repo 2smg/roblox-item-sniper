@@ -31,7 +31,8 @@ except FileNotFoundError:
     exit("The proxies.txt file was not found")
 
 asset_url_iter = cycle([
-    requests.get(f"https://www.roblox.com/catalog/{asset_id}/--").url
+    requests.get(f"https://www.roblox.com/catalog/{asset_id}/--").url \
+        .replace("https://www.roblox.com", "")
     for asset_id in ASSET_IDS
 ])
 xsrf_token = None
