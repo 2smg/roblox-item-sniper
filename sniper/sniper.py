@@ -75,7 +75,7 @@ class PriceCheckThread(threading.Thread):
     
     def run(self):
         global target
-        
+
         while True:
             asset_url, price_threshold = next(target_iter)
             proxy = proxy_pool.get()
@@ -97,6 +97,7 @@ class PriceCheckThread(threading.Thread):
                     with target_lock:
                         if target != reseller:
                             target = reseller
+                            for t in buy_threads: t.event.set()
                             print("target set:", target)
                 
                 proxy_pool.put(proxy)
