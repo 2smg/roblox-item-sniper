@@ -42,7 +42,7 @@ class Proxy:
         if not force and hostname in self.connection_map:
             return self.connection_map[hostname]
         
-        conn = http.client.HTTPSConnection(self.proxy.hostname, self.proxy.port)
+        conn = http.client.HTTPSConnection(self.proxy.hostname, self.proxy.port, timeout=5)
         conn.set_tunnel(hostname, 443)
         self.connection_map[hostname] = conn
         return conn
