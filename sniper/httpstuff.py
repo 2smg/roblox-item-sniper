@@ -32,7 +32,7 @@ class ProxyPool:
     def load(self, proxy_list):
         with self.lock:
             for proxy in proxy_list:
-                self.raw_proxies.appen(proxy)
+                self.raw_proxies.append(proxy)
     
     def get(self):
         with self.lock:
