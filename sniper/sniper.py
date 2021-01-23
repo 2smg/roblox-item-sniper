@@ -21,7 +21,8 @@ except FileNotFoundError:
 
 proxy_pool = ProxyPool(PRICE_CHECK_THREADS)
 try:
-    proxy_pool.load("proxies.txt")
+    with open("proxies.txt") as f:
+        proxy_pool.load(f.read().splitlines())
 except FileNotFoundError:
     exit("The proxies.txt file was not found")
 
